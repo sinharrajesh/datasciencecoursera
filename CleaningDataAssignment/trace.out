@@ -1,0 +1,132 @@
+TRACE [2015-01-26 00:18:20] checking if rawdata exists else creating it in /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment
+TRACE [2015-01-26 00:18:20] checking if zipfile /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/zipfile.zip is already available
+TRACE [2015-01-26 00:18:20] checking if zip file has already been expanded in /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset
+TRACE [2015-01-26 00:18:20] unzip the download file in /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata
+TRACE [2015-01-26 00:18:26] unzipped file and created following files:
+
+ [1] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/activity_labels.txt"                         
+ [2] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/features.txt"                                
+ [3] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/features_info.txt"                           
+ [4] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/README.txt"                                  
+ [5] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/Inertial Signals/body_acc_x_test.txt"   
+ [6] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/Inertial Signals/body_acc_y_test.txt"   
+ [7] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/Inertial Signals/body_acc_z_test.txt"   
+ [8] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/Inertial Signals/body_gyro_x_test.txt"  
+ [9] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/Inertial Signals/body_gyro_y_test.txt"  
+[10] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/Inertial Signals/body_gyro_z_test.txt"  
+[11] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/Inertial Signals/total_acc_x_test.txt"  
+[12] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/Inertial Signals/total_acc_y_test.txt"  
+[13] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/Inertial Signals/total_acc_z_test.txt"  
+[14] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/subject_test.txt"                       
+[15] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/X_test.txt"                             
+[16] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/y_test.txt"                             
+[17] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/Inertial Signals/body_acc_x_train.txt" 
+[18] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/Inertial Signals/body_acc_y_train.txt" 
+[19] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/Inertial Signals/body_acc_z_train.txt" 
+[20] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/Inertial Signals/body_gyro_x_train.txt"
+[21] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/Inertial Signals/body_gyro_y_train.txt"
+[22] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/Inertial Signals/body_gyro_z_train.txt"
+[23] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/Inertial Signals/total_acc_x_train.txt"
+[24] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/Inertial Signals/total_acc_y_train.txt"
+[25] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/Inertial Signals/total_acc_z_train.txt"
+[26] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/subject_train.txt"                     
+[27] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/X_train.txt"                           
+[28] "/Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/y_train.txt"                           
+TRACE [2015-01-26 00:18:26] Raw data files extracted and available in /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset
+INFO [2015-01-26 00:18:27] Raw data is in /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset
+TRACE [2015-01-26 00:18:27] Creating tidy data directory /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir
+INFO [2015-01-26 00:18:27] file copy /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/X_train.txt to /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir/X_full.txt
+INFO [2015-01-26 00:18:27] file copy /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/y_train.txt to /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir/y_full.txt
+INFO [2015-01-26 00:18:27] file copy /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/train/subject_train.txt to /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir/subject_full.txt
+INFO [2015-01-26 00:18:27] file append /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/X_test.txt to /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir/X_full.txt
+INFO [2015-01-26 00:18:28] file append /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/y_test.txt to /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir/y_full.txt
+INFO [2015-01-26 00:18:28] file append /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/rawdata/UCI HAR Dataset/test/subject_test.txt to /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir/subject_full.txt
+TRACE [2015-01-26 00:19:10] Reading features labels and then assigning the column names to X.Full DT
+TRACE [2015-01-26 00:19:10] made the tidy vector by grepl on mean and std column names
+TRACE [2015-01-26 00:19:10] The total number of columns in X is now 79
+TRACE [2015-01-26 00:19:10] Converted the activity Lables before cBind of the same
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - Subject
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - Activity
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAcc-mean()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAcc-mean()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAcc-mean()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAcc-std()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAcc-std()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAcc-std()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tGravityAcc-mean()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tGravityAcc-mean()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tGravityAcc-mean()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tGravityAcc-std()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tGravityAcc-std()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tGravityAcc-std()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccJerk-mean()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccJerk-mean()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccJerk-mean()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccJerk-std()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccJerk-std()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccJerk-std()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyro-mean()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyro-mean()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyro-mean()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyro-std()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyro-std()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyro-std()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroJerk-mean()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroJerk-mean()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroJerk-mean()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroJerk-std()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroJerk-std()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroJerk-std()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccMag-mean()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccMag-std()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tGravityAccMag-mean()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tGravityAccMag-std()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccJerkMag-mean()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyAccJerkMag-std()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroMag-mean()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroMag-std()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroJerkMag-mean()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - tBodyGyroJerkMag-std()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAcc-mean()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAcc-mean()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAcc-mean()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAcc-std()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAcc-std()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAcc-std()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAcc-meanFreq()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAcc-meanFreq()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAcc-meanFreq()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccJerk-mean()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccJerk-mean()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccJerk-mean()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccJerk-std()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccJerk-std()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccJerk-std()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccJerk-meanFreq()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccJerk-meanFreq()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccJerk-meanFreq()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyGyro-mean()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyGyro-mean()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyGyro-mean()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyGyro-std()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyGyro-std()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyGyro-std()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyGyro-meanFreq()-X
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyGyro-meanFreq()-Y
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyGyro-meanFreq()-Z
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccMag-mean()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccMag-std()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyAccMag-meanFreq()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyBodyAccJerkMag-mean()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyBodyAccJerkMag-std()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyBodyAccJerkMag-meanFreq()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyBodyGyroMag-mean()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyBodyGyroMag-std()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyBodyGyroMag-meanFreq()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyBodyGyroJerkMag-mean()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyBodyGyroJerkMag-std()
+TRACE [2015-01-26 00:19:10] Bound and assigned names to X - fBodyBodyGyroJerkMag-meanFreq()
+INFO [2015-01-26 00:19:10] Melting the DT on subject and Activity
+INFO [2015-01-26 00:19:10] DCast with mean
+INFO [2015-01-26 00:19:12] Writing to the file tidydata.txt in /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir
+INFO [2015-01-26 00:19:12] cleaning up - removing files /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir/X_Full.txt, /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir/Y_Full.txt, /Users/3126147/gitrepos/datasciencecoursera/CleaningDataAssignment/tidydatadir/subject_Full.txt
