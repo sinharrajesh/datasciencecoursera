@@ -1,0 +1,420 @@
+---
+title: "Tornados are Biggest Events of Concern for Human Health - Floods and Hurricanes cause Maximum Economic Damage in US"  
+author: "Rajesh Sinha"
+date: "18 February 2015"
+output: 
+    html_document:
+        toc: true
+        toc_depth: 3
+        number_sections: true
+        theme: spacelab
+---
+
+
+```{r  library, warning=FALSE, message=FALSE, echo=TRUE}
+library(data.table)
+library(reshape2)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+trim <- function(x) gsub("^\\s+|\\s+$", "", x)
+```
+`r opts_chunk$set(echo=T, tidy=T)`
+
+
+# Synopsis
+This report analyzes the impact data of natural events from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database. The major findings are as follows
+
+*  In terms of Human Health impact, __Tornados are No. 1 event which have caused maximum fatalities (over 5600) and injuries (over 91000)__ over last 61 years of recorded events. The other top events from __fatalities perspective are Excessive Heat and Flash Floods__. __Thunderstorm Winds and Floods__ are the next two event types which have caused __maximum cumulative injuries after Tornados__. 
+
+*  On an __average basis per occurence__ (having more than 100 recorded incidents), __Tsunami have maximum fatality and injury rate__. 
+
+*  The Top-3 events (in order) that have had __maximum economic impact__ in terms of cumulative damages to crop and propery are __Flood, Hurricane(Typhoon) and Tornados__. They have caused cumulative damage of 160.68B USD, 90.87B USD and 58.95B USD respectively.
+
+*  On a __per-occurance average economic impact__, the top-3 events over 61 years have been __Hurricane(Typhoon), Storm Surge/Tide and Drought__ which have been shown to cause average economic damage of 390M USD, 213M USD and 54M USD respectively.
+
+
+# Intended Audience
+
+The Audience of this report will ideally be government or municipal manager who might be responsible for preparing for severe weather events and can use the results of this report to prioritize resources for different types of events. The report does not make any recommendations for how this prioritization needs to happen as the results may require county wise segregation and analysis of historical data rather than painting with broad strokes across whole of the United States.
+
+
+
+
+# Data Processing
+
+Within Data processing, we will be executing following steps 
+
+*  Load the data from the source file
+
+*  Filtering rows for answering the question on hand
+
+    + Select only observations where any of the following is more than ZERO - Injures, Fatalities, Crop Damage or Property Damage
+    
+    + Preliminary correction of property and crop damage exponents
+    
+    + answer the question whether any specific date can be used as a cut-off for extracting relevant data
+    
+
+*  Standardizing Attributes of Observations to make it amenable for consistent analysis
+    
+    + confirm correction of Property and Crop Damage exponents
+    
+    + Standard Event Types by doing an exact match with Reference Event Types
+    
+    + Undertaking a Double-Metaphone based match for remaining event types
+
+
+## Initial Load of Data
+
+The Initial Step is to load the data from the US NOAA Storm database which has been provided in bz2 file available from download [here](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2)
+
+```{r initLoad, cache=TRUE}
+setwd("~/courses/John Hopkins DS specialization")
+zip.filename <- "repdata-data-StormData.csv.bz2"
+storm.data.raw <<- read.csv(bzfile(zip.filename), strip.white=T)
+glimpse(storm.data.raw)
+```
+
+The data starts from **`r as.Date(storm.data.raw[1,]$BGN_DATE,"%m/%d/%Y %X")`** and has **`r nrow(storm.data.raw)`** observations till **`r as.Date(storm.data.raw[nrow(storm.data.raw),]$BGN_DATE,"%m/%d/%Y %X")`**
+
+
+## Filtering Data 
+
+We consider ways in which the dataset with observations which are relevant to us to reduce the footprint of observations to more manageable number without sacrificing functional accuracy of reporting on the same
+
+### Observations with impact on Health and Economy
+
+Since we are interested in looking at fatalities, injuries, crop and property damage only, it would make sense to only have rows which have any of these are more than zero and also only take a selection of columns which matter to our processing subsequently.
+
+```{r filterRows}
+storm.data <-   storm.data.raw %>% filter(INJURIES > 0 | FATALITIES > 0 | PROPDMG > 0 | CROPDMG > 0) %>% select(REFNUM, BGN_DATE, EVTYPE, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP,FATALITIES, INJURIES )
+````
+
+This leaves about **`r nrow(storm.data)`** observations to deal with.
+
+
+### Fixing the Units of Damages to Crop and Property
+
+The [code book](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf) makes reference three units K, M, B to indicate thousand, million, billions as a unit against the property orS cropdamage numeric value as examples. We assess what are the available values in the observations of interest in PROPERTY and CROP Damage EXP fields.
+
+
+```{r makingDamagesUnit}
+unique(storm.data$PROPDMGEXP)
+unique(storm.data$CROPDMGEXP)
+```
+
+Since we see a wide variety of values including lowercase and uppercase of H, K, M, B - it would make sense to revalue them and treat h/H, k/K, m/M, b/B as hundreds, thousands, millions and billions respectively. All others can be revalued to 1. 
+
+```{r reValue}
+storm.data$cropdmg.multipler <- ifelse( storm.data$CROPDMGEXP %in% c("h","H"), 100, 
+                                        ifelse(storm.data$CROPDMGEXP %in% c("k", "K"), 1000,
+                                               ifelse(storm.data$CROPDMGEXP %in% c("m", "M"), 1000000,
+                                                      ifelse(storm.data$CROPDMGEXP %in% c("b","B"),1000000000, 1))))
+storm.data$propdmg.multipler <- ifelse( storm.data$PROPDMGEXP %in% c("h","H"), 100, 
+                                        ifelse(storm.data$PROPDMGEXP %in% c("k", "K"), 1000,
+                                               ifelse(storm.data$PROPDMGEXP %in% c("m", "M"), 1000000,
+                                                      ifelse(storm.data$PROPDMGEXP %in% c("b","B"),1000000000, 1))))
+storm.data <- mutate(storm.data, cropdmgusd = cropdmg.multipler * CROPDMG, propdmgusd = propdmg.multipler * PROPDMG)
+glimpse(storm.data)
+````
+
+
+
+### Should we consider further slicing ?
+
+```{r furtherslice, fig.width=12}
+check <- storm.data %>% mutate(year = as.numeric(format(as.Date(BGN_DATE,"%m/%d/%Y %H"),"%Y")) , ecousd = propdmgusd + cropdmgusd) %>% group_by(year) %>% summarize( Total.Economic.Consequence.In.USD = sum(ecousd), Fatalities= sum(FATALITIES), Injuries = sum(INJURIES), No.of.Incidents = n())
+dat.m <- melt(check, "year")
+p <- ggplot(dat.m, aes(year, value, colour=variable)) + geom_point() + facet_wrap(~ variable, ncol=1, scales="free_y")
+p + ggtitle("Plot of Economic Consequence, Injuries,\n Fatalities and Count by Year of \nRecording (1950-2011)")
+````
+
+With the above plot windows - it is tempting to disregards the data before 1994 as incidents reported and overall economic damage is low. We can certainly do this when presenting the economic impact, however from the number of fatalities and injuries reported, it is not trivial - so we avoid this option right now. Some analysts will take this approach especially since revisions have happened on the standards and it is likely (but not proven in this analysis) that quality of data may have improved significantly. However for sake of completeness we avoid any more filtering to restrict the observations of interest.
+
+## Standardizing Data
+
+### Crop and Property Damage exponent field standardization
+
+We have already standardized the units of property and crop damage and set new columns for resultant property and crop damage multiplers in previous sections
+
+### Mapping the Event Type to NOAA standards using Exact Match
+
+The NOAA prescribed values for eventype as present in the code-book Page-6 Table-1 lists 48 distinct values for the Storm event names. As against this we have **`r length(unique(trim(toupper(storm.data$EVTYPE))))`** distinct values in observations.
+
+Before we proceed, we should ease out the subsequent analysis by upper casing all event type and triming it from both sides.
+
+````{r ExactTextMatch}
+
+refVector = c("Astronomical Low Tide", "Avalanche", "Blizzard", "Coastal Flood", 
+              "Cold/Wind Chill", "Debris Flow", "Dense Fog", "Dense Smoke", "Drought", 
+              "Dust Devil", "Dust Storm", "Excessive Heat", "Extreme Cold/Wind Chill",
+              "Flash Flood", "Flood", "Frost/Freeze", "Funnel Cloud", "Freezing Fog", 
+              "Hail", "Heat", "Heavy Rain", "Heavy Snow", "High Surf", "High Wind", 
+              "Hurricane (Typhoon)", "Ice Storm", "Lake-Effect Snow", "Lakeshore Flood", 
+              "Lightning", "Marine Hail", "Marine High Wind", "Marine Strong Wind", 
+              "Marine Thunderstorm Wind", "Rip Current", "Seiche", "Sleet", 
+              "Storm Surge/Tide", "Strong Wind", "Thunderstorm Wind", "Tornado", 
+              "Tropical Depression", "Tropical Storm", "Tsunami", "Volcanic Ash", 
+              "Waterspout", "Wildfire", "Winter Storm", "Winter Weather") 
+
+ref.events <- data.frame(evtype.std = refVector, evtype.upper=toupper(refVector), stringsAsFactors=F)
+storm.data <- mutate(storm.data, EVTYPE = trim(toupper(EVTYPE)))
+ 
+# Very basic fixes to data for expanding abbreviations
+storm.data$EVTYPE <- sub("WINDS", "WIND", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("TSTM", "THUNDERSTORM", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("RIVER FLOOD", "FLOOD", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("HAILSTORM", "HAIL", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("^TYPHOON$", "HURRICANE", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("DAMAGING FREEZE", "FROST/FREEZE", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("MAJOR FLOOD", "FLOOD", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("EARLY FROST", "FROST/FREEZE", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("SEVERE THUNDERSTORM", "THUNDERSTORM", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("HIGH WIND/COLD", "HIGH WIND", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("FLOOD/RAIN/WIND", "FLOOD", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("RECORD COLD", "COLD/WIND CHILL", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("FREEZE", "FROST/FREEZE", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("AGRICULTURAL |EROSION/", "", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("RECORD/", "", storm.data$EVTYPE)
+storm.data$EVTYPE <- sub("UNSEASONABLY WARM AND DRY|RECORD HEAT", "EXCESSIVE HEAT", storm.data$EVTYPE)
+# Merge and see the standard matches
+matched.data <<- left_join(storm.data, ref.events, by = c("EVTYPE" = "evtype.upper"))
+
+#Keep unmatched data in storm.data and only the matched data in matched.data
+storm.data <- storm.data[is.na(matched.data$evtype.std),]
+matched.data <- matched.data[!is.na(matched.data$evtype.std),]
+first.pass <- nrow(matched.data)
+
+````
+
+By using exact text match we have matched **`r first.pass`** number of observations leaving **`r nrow(storm.data)`** observations to deal with.
+
+### Matching with Double Metaphones
+
+Now we attempt to do a match based on phonetic double metaphone algorithm. For this we have to rely to R-Java bridge and download apache codec library from [here](). The download has to extracted and all jars placed in system classpath or we can keep that in a classpath explicitly specified in the script itself. For this analysis on OS X Yosemite, it has been kept in /Library/Java/Extensions as that is system wide classpath
+
+
+````{r DoubleMetaphoneBasic}
+library(rJava)
+.jinit() # Initialize the JVM
+dmp <- .jnew("org.apache.commons.codec.language.DoubleMetaphone") #should be in classpath
+double_metaphone <- function(x) {.jcall(dmp,"S","doubleMetaphone", x)}  # define a function for Double Metaphone in R
+
+# Generate Metaphones for reference values and remove the ones with duplicates 
+ref.metaphone <- cbind(data.frame(doubleMetaphone=sapply(ref.events$evtype.upper, double_metaphone), row.names=NULL, stringsAsFactors=F),  ref.events)
+to.solve.later <- ref.metaphone[duplicated(ref.metaphone$doubleMetaphone),]
+ref.metaphone <- ref.metaphone[!duplicated(ref.metaphone$doubleMetaphone),]
+````
+Of the **`r nrow(ref.metaphone) + nrow(to.solve.later)`** reference event types provided, there are **`r nrow(to.solve.later)`** which have a duplicate metaphone key - so we will take them out of the match else we will get cross-product with data. 
+
+
+````{r DoubleMetaphoneObservationData, warning=FALSE}
+# Create a unique list of all remaining event type
+evtypes   <- unique(storm.data$EVTYPE) 
+ref.table <- data.frame(cbind( doubleMetaphone=sapply(evtypes, double_metaphone),  EVTYPE=evtypes))
+
+# Now match the two tables on doubleMetaphone and keep the ones which matched
+metaphone.match.key <- inner_join(ref.table, ref.metaphone, by = c("doubleMetaphone" = "doubleMetaphone")) %>% filter(!is.na(evtype.std)) %>% select(EVTYPE, evtype.std, evtype.upper)                        
+````
+In the remanining **`r nrow(storm.data)`** observations, there are **`r length(evtypes)`** unique event types. We generate their metaphones as well and then join with reference event list with metaphone as the key. There are **`r nrow(metaphone.match.key)`** matches between them. We use the matched metaphones records to populate the correct standard event types (in Mixed and Upper cases) and then add it to the matched list.
+
+```{r addMoreMatches, warning=FALSE}
+more.matches <- left_join(storm.data, metaphone.match.key, by = c("EVTYPE" = "EVTYPE")) 
+storm.data <- storm.data[is.na(more.matches$evtype.std),]
+matched.data <- rbind(matched.data, more.matches %>% filter(!is.na(evtype.std)) %>% select(-evtype.upper))
+````
+
+Total Standardized Observations for event types is now **`r nrow(matched.data)`** leaving **`r nrow(storm.data)`** to be standardized. Since this is a very small percentage, we can use the event types as is. As against **`r length(unique(matched.data$evtype.std))`** the remaning data has **`r length(unique(storm.data$EVTYPE))`** unique event type values. We just use the pre-existing event type for these remaining rows as standard event type.
+
+
+```{r finalmatchedset}
+matched.data <- rbind(matched.data, mutate(storm.data, evtype.std=EVTYPE))
+matched.data$EVTYPE <- as.factor(matched.data$EVTYPE)
+matched.data$evtype.std <- as.factor(matched.data$evtype.std)
+rm(storm.data, metaphone.match.key, more.matches, ref.table, evtypes, ref.metaphone, ref.events, check)
+````
+
+Total rows in matched data is now **`r nrow(matched.data)`** which is what we started off for the storm data which needed standardization. 
+
+# Results
+
+## Events which have had maximum impact on Human Health
+Human health can be measured from given dataset observations using Fatalities and Injuries columns. They cannot be merged to generate a combined measure of human health impact and therefore we find top-10 event types by fatalities and injuries and see the commonalities
+
+
+```{r PlotHealthConsequence, fig.width=12}
+library(grid)
+vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
+
+a <-matched.data %>% filter(FATALITIES >0) %>%
+    select(evtype.std, FATALITIES) %>% 
+    group_by(evtype.std) %>% 
+    summarize(cnt=n(), total.fatalities = sum(FATALITIES)) %>% 
+    arrange(desc(total.fatalities)) %>% 
+    slice(1:10)
+
+b <-matched.data %>% filter(FATALITIES >0) %>%
+    select(evtype.std, FATALITIES) %>% 
+    group_by(evtype.std) %>% 
+    summarize(cnt=n(), avg.fatalities = mean(FATALITIES)) %>% 
+    arrange(desc(avg.fatalities)) %>% 
+    slice(1:10)
+
+c <-matched.data %>% filter(INJURIES >0) %>%
+    select(evtype.std, INJURIES) %>% 
+    group_by(evtype.std) %>% 
+    summarize(cnt=n(), total.injuries = sum(INJURIES)) %>% 
+    arrange(desc(total.injuries)) %>% 
+    slice(1:10)
+
+d <-matched.data %>% filter(INJURIES >0) %>%
+    select(evtype.std, INJURIES) %>% 
+    group_by(evtype.std) %>% 
+    summarize(cnt=n(), avg.injuries = mean(INJURIES)) %>% 
+    arrange(desc(avg.injuries)) %>% 
+    slice(1:10)
+
+
+a1 <- ggplot(a, 
+            aes(x=evtype.std, y=total.fatalities)) + 
+            geom_bar(stat="identity") + 
+            ggtitle("Cumulative Fatalities by Event Type (1950-2011)") + 
+            xlab("Event Type") + ylab("Cumulative Fatalities in Numbers") + 
+            coord_flip()
+
+c1 <- ggplot(c, 
+            aes(x=evtype.std, y=total.injuries)) + 
+            geom_bar(stat="identity") + 
+            ggtitle("Cumulative Injuries by Event Type (1950-2011") + 
+            xlab("Event Type") + ylab("Cumulative Injuries in Numbers") + 
+            coord_flip()
+
+pushViewport(viewport(layout = grid.layout(2, 1))) # Define layout
+print(a1, vp = vplayout(1, 1))
+print(c1, vp = vplayout(2, 1))
+````
+
+From the above, it is clear that as a total, The **top-3 events that have had maximum cumulative fatalities in US** are  
+
+````{r} 
+slice(a,1:3) %>% select(evtype.std, total.fatalities) 
+````
+
+From the above, it is clear that as a total, The **top-3 events that have had maximum cumulative injuries in US** are  
+````{r} 
+slice(c,1:3) %>% select(evtype.std, total.injuries) 
+````
+
+
+It should be pointed out that following events figure in top-10 of **both cumulative Injuries and Fatalities impact** - 
+````{r} 
+intersect(a$evtype.std, c$evtype.std)
+````
+
+
+Following events **only figure in top-10 by cumulative fatalities** so far between 1950 and 2011 - 
+````{r} 
+setdiff(a$evtype.std, c$evtype.std)
+````
+
+
+Following events **only figure in top-10 by cumulative injuries** between 1950 and 2011 -
+````{r} 
+setdiff(c$evtype.std, a$evtype.std)
+````
+
+
+Following are __top-3 events causing maximum fatalities per occurance at an average__ if they have more than 100 recorded events -
+````{r} 
+slice(b,1:3) %>% select(evtype.std, avg.fatalities) 
+````
+
+
+Following are __top-3 events causing maximum injuries per occurance at an average__ if they have more than 100 recorded events -
+````{r} 
+slice(d,1:3) %>% select(evtype.std, avg.injuries) 
+````
+
+
+## Events which have had maximum Economic Consequences
+
+Economic consequences within the dataset can be assessed by summing up the damages to property and crop. This is not to say that loss of life and injuries will not have economic consequences, but their quantification is much harder to add within the economic consuequences directly. Answering this questions will require us to plot both the 1. Cumulative damage by events as well as 2. The average magnitude of each event to understand as a whole which events have had most severe economic consequence as well as in case an event happens, what is the typical economic damage expected.
+
+
+```{r PlotEconomicConsequence, fig.width=12}
+library(grid)
+vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
+
+x <-matched.data %>% 
+    select(evtype.std, cropdmgusd, propdmgusd) %>% 
+    group_by(evtype.std) %>% 
+    summarize(cnt=n(), total.dmg = sum(cropdmgusd + propdmgusd), propmusd=sum(propdmgusd)/1000000, cropmusd=sum(cropdmgusd)/1000000 ) %>% 
+    arrange(desc(total.dmg)) %>% 
+    slice(1:10)
+
+eco.dmg.sum <- x %>% 
+    select(evtype.std, propmusd, cropmusd)  %>% 
+    gather(damage.type, damage.usd, propmusd:cropmusd) 
+
+y <-matched.data %>% 
+    select(evtype.std, cropdmgusd, propdmgusd) %>% 
+    group_by(evtype.std) %>% 
+    summarize(cnt=n(), avg.dmg = mean(cropdmgusd+propdmgusd), propmusd=mean(propdmgusd)/1000000, cropmusd=mean(cropdmgusd)/1000000 ) %>% 
+    filter(cnt > 100) %>%
+    arrange(desc(avg.dmg)) %>% 
+    slice(1:10) 
+
+eco.dmg.avg <- y %>%
+    select(evtype.std, propmusd, cropmusd)  %>% 
+    gather(damage.type, damage.usd, propmusd:cropmusd) 
+
+q1 <- ggplot(eco.dmg.sum, 
+            aes(x=evtype.std, y=damage.usd, fill=damage.type)) + 
+            geom_bar(stat="identity") + 
+            ggtitle("Cumulative Economic Consequence by Event Type") + 
+            xlab("Event Type") + ylab("Cumulative Economic Damage in Millions USD, (1950-2011)") + 
+            scale_fill_discrete(name = "Group", label = c("Property Damage","Crop Damage")) + coord_flip()
+
+q2 <- ggplot(eco.dmg.avg, 
+            aes(x=evtype.std, y=damage.usd, fill=damage.type)) + 
+            geom_bar(stat="identity") + 
+            ggtitle("Average Economic Consequence by Event Type") + 
+            xlab("Event Type") + ylab("Avg Economic Damage in Millions USD, (1950-2011)") + 
+            scale_fill_discrete(name = "Group", label = c("Property Damage","Crop Damage")) + coord_flip()
+
+pushViewport(viewport(layout = grid.layout(2, 1))) # Define layout
+print(q1, vp = vplayout(1, 1))
+print(q2, vp = vplayout(2, 1))
+````
+
+From the above, it is clear that as a total, The top-3 events that have had maximum cumulative damage in US are  
+
+````{r} 
+slice(x,1:3) %>% select(evtype.std, total.dmg) 
+````
+
+
+From per occurance average - there is a slight difference in the list for top-3 
+````{r} 
+slice(y,1:3) %>% select(evtype.std, avg.dmg) 
+````
+
+
+It should be pointed out that following events figure in top-10 of **both cumulative and by average-per-instance impact**. 
+````{r} 
+intersect(x$evtype.std, y$evtype.std)
+````
+
+
+Following events **only figure in top-10 by cumulative damage** so far between 1950 and 2011 - 
+````{r} 
+setdiff(x$evtype.std, y$evtype.std)
+````
+
+
+Following events **only figure in top-10 by average impact** and not by their aggregate impact so far -
+````{r} 
+setdiff(y$evtype.std, x$evtype.std)
+````
